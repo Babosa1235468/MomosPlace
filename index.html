@@ -3,60 +3,58 @@
 
 <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Jogo de Psicologia</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <style>
         body {
             background: linear-gradient(135deg, #000000, #1a1a1a);
             color: #fff;
             font-family: "Poppins", sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             height: 100vh;
             margin: 0;
-            flex-direction: column;
+            overflow: hidden;
             text-align: center;
-            color: white;
         }
 
         h1 {
             font-size: 2rem;
-            margin-bottom: 30px;
             color: #f5f5f5;
+            margin-top: 150px;
             letter-spacing: 1px;
         }
 
+        /* Barra fixa de quadrados */
         .barraDificuldade {
+            position: fixed;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
             display: flex;
             gap: 10px;
             background-color: rgba(255, 255, 255, 0.1);
             padding: 15px 25px;
             border-radius: 15px;
             box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
-            margin-bottom: 50px;
-            flex-wrap: wrap;
-            justify-content: center;
+            z-index: 10;
         }
 
         .quadrado {
             width: 60px;
             height: 60px;
             border-radius: 10px;
-            transition: transform 0.3s ease, opacity 0.4s ease;
-            opacity: 0;
-            visibility: hidden;
-            box-shadow: 0 0 8px rgba(255, 255, 255, 0.1);
-        }
-
-        .quadrado.visivel {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        .quadrado:hover {
-            transform: scale(1.1);
+            transition: all 0.4s ease;
+            opacity: 0.3;
             cursor: pointer;
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+        }
+
+        .quadrado.ativo {
+            opacity: 1;
+            transform: scale(1.15);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
         }
 
         .verde {
@@ -71,53 +69,52 @@
             background-color: #f44336;
         }
 
-        button {
+        /* Imagem dinâmica no canto superior direito */
+        #imagemCanto {
+            position: fixed;
+            top: 15px;
+            right: 25px;
+            width: 70px;
+            transition: all 0.4s ease;
+            z-index: 11;
+        }
+
+        .btn-custom {
             background: linear-gradient(45deg, #6200ea, #9c27b0);
             border: none;
             color: white;
             padding: 14px 35px;
             border-radius: 8px;
             font-size: 1.1rem;
-            letter-spacing: 0.5px;
             cursor: pointer;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
-        button:hover {
+        .btn-custom:hover {
             transform: scale(1.05);
             box-shadow: 0 0 15px rgba(156, 39, 176, 0.6);
         }
 
         .perguntas {
-            margin-top: 40px;
+            margin-top: 50px;
             width: 80%;
             max-width: 600px;
-            display: block;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .pergunta {
+            display: none;
             font-size: 1.2rem;
             margin-bottom: 20px;
             line-height: 1.5;
-        }
-
-        @media (max-width: 600px) {
-            .quadrado {
-                width: 45px;
-                height: 45px;
-            }
-
-            button {
-                width: 80%;
-            }
         }
     </style>
 </head>
 
 <body>
 
-    <h1>Jogo de Psicologia</h1>
-
+    <!-- 🔹 Barra de quadrados no topo -->
     <div class="barraDificuldade" id="barraDificuldade">
         <div class="quadrado verde"></div>
         <div class="quadrado verde"></div>
@@ -130,25 +127,32 @@
         <div class="quadrado vermelho"></div>
     </div>
 
-    <button id="botaoComecar" onclick="MostrarPergunta(1)">COMEÇAR QUIZ</button>
-    <br>
-    <button id="botaoComecar" onclick="MostrarTodas()">MOSTRAR PERGUNTAS</button>
+    <!-- 🔹 Imagem no canto superior direito -->
+    <img id="imagemCanto" src="https://cdn-icons-png.flaticon.com/512/616/616408.png" alt="Ícone psicológico">
 
-    <div class="perguntas" >
-        <div id="Pergunta_1" class="pergunta"> 1 </div>
-        <div id="Pergunta_2" class="pergunta"> 2 </div>
-        <div id="Pergunta_3" class="pergunta"> 3 </div>
-        <div id="Pergunta_4" class="pergunta"> 4 </div>
-        <div id="Pergunta_5" class="pergunta"> 5 </div>
-        <div id="Pergunta_6" class="pergunta"> 6 </div>
-        <div id="Pergunta_7" class="pergunta"> 7 </div>
-        <div id="Pergunta_8" class="pergunta"> 8 </div>
-        <div id="Pergunta_9" class="pergunta"> 9 </div>
+    <h1>Jogo de Psicologia</h1>
+
+    <div class="mt-4">
+        <button id="MostrarMaisPergunta" class="btn btn-custom" onclick="MostrarPergunta()">COMEÇAR QUIZ</button>
+        <button id="EsconderTodas" class="btn btn-outline-light ms-2" onclick="EsconderTodas()">RESETAR</button>
+    </div>
+
+    <div class="perguntas mt-5" id="perguntasContainer">
+        <div id="Pergunta_1" class="pergunta">Pergunta 1</div>
+        <div id="Pergunta_2" class="pergunta">Pergunta 2</div>
+        <div id="Pergunta_3" class="pergunta">Pergunta 3</div>
+        <div id="Pergunta_4" class="pergunta">Pergunta 4</div>
+        <div id="Pergunta_5" class="pergunta">Pergunta 5</div>
+        <div id="Pergunta_6" class="pergunta">Pergunta 6</div>
+        <div id="Pergunta_7" class="pergunta">Pergunta 7</div>
+        <div id="Pergunta_8" class="pergunta">Pergunta 8</div>
+        <div id="Pergunta_9" class="pergunta">Pergunta 9</div>
     </div>
 
     <script src="js/scriptPsico.js">
 
     </script>
+
 </body>
 
 </html>
