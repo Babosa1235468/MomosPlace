@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Temporizador Pomodoro</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      text-align: center;
+      background: white;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      margin-top: 50px;
+    }
+
+    #timer {
+      font-size: 80px;
+      margin: 20px 0;
+    }
+
+    button {
+      background-color: #1c164e;
+      border: none;
+      color: white;
+      padding: 15px 30px;
+      margin: 5px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background-color: #131030;
+    }
+
+    #status {
+      font-size: 20px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Temporizador Pomodoro</h1>
+  <div id="status">Modo: Foco</div>
+  <div id="timer">25:00</div>
+
+  <button onclick="startTimer()">Iniciar</button>
+  <button onclick="pauseTimer()">Pausar</button>
+  <button onclick="resetTimer()">Resetar</button>
+
+  <script>
+    let focusTime = 25 * 60; // 25 minutos
+    let breakTime = 5 * 60;  // 5 minutos
+    let timeLeft = focusTime;
+    let isRunning = false;
+    let isFocus = true;
+    let timerInterval;
+
+    function updateDisplay() {
+      const minutes = Math.floor(timeLeft / 60);
+      const seconds = timeLeft % 60;
+      document.getElementById('timer').textContent =
+        `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+
+    function startTimer() {
+      if (!isRunning) {
+        isRunning = true;
+        timerInterval = setInterval(() => {
+          timeLeft--;
+          updateDisplay();
+
+          if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            isRunning = false;
+            if (isFocus) {
+              alert("Tempo de foco acabou! Hora de uma pausa.");
+              isFocus = false;
+              timeLeft = breakTime;
+              document.getElementById('status').textContent = "Modo: Pausa";
+              updateDisplay();
+            } else {
+              alert("A pausa acabou! Volta ao foco.");
+              isFocus = true;
+              timeLeft = focusTime;
+              document.getElementById('status').textContent = "Modo: Foco";
+              updateDisplay();
+            }
+          }
+        }, 1000);
+      }
+    }
+
+    function pauseTimer() {
+      clearInterval(timerInterval);
+      isRunning = false;
+    }
+
+    function resetTimer() {
+      clearInterval(timerInterval);
+      isRunning = false;
+      isFocus = true;
+      timeLeft = focusTime;
+      document.getElementById('status').textContent = "Modo: Foco";
+      updateDisplay();
+    }
+
+    updateDisplay();
+  </script>
+
+</body>
+</html>
